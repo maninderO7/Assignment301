@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp">
+
+
+    <TextView
+        android:id="@+id/tvActionHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:text="Action"
+        android:layout_margin="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+
+    <EditText
+        android:id="@+id/edtDialogPosition"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Position"
+        android:layout_margin="10dp"
+        android:inputType="number"
+        app:layout_constraintTop_toBottomOf="@id/tvActionHeader"
+        tools:layout_editor_absoluteX="20dp" />
+
+    <EditText
+        android:id="@+id/edtDialogName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Name"
+        android:layout_margin="10dp"
+        app:layout_constraintTop_toBottomOf="@+id/edtDialogPosition"
+        tools:layout_editor_absoluteX="20dp" />
+    <EditText
+        android:id="@+id/edtDialogAge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Age"
+        android:inputType="number"
+        android:layout_margin="10dp"
+        app:layout_constraintTop_toBottomOf="@+id/edtDialogName"
+        tools:layout_editor_absoluteX="20dp" />
+
+    <Button
+        android:id="@+id/btnDialogCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+
+        android:layout_marginEnd="56dp"
+        android:layout_marginBottom="16dp"
+        android:text="cancel"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edtDialogAge" />
+
+    <Button
+        android:id="@+id/btnDialogOk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:text="Ok"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnDialogCancel"
+        app:layout_constraintTop_toBottomOf="@+id/edtDialogAge" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
