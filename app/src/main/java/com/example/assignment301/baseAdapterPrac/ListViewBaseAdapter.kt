@@ -1,4 +1,4 @@
-package com.example.assignment301.BaseAdapter
+package com.example.assignment301.baseAdapterPrac
 
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +9,7 @@ import com.example.assignment301.R
 
 class ListViewBaseAdapter(
     var list: ArrayList<Person>
+
 ): BaseAdapter() {
     override fun getCount(): Int {
         return list.size

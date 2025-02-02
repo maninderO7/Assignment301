@@ -1,4 +1,4 @@
-package com.example.assignment301.BaseAdapter
+package com.example.assignment301.baseAdapterPrac
 
 data class Person(
     var name: String,

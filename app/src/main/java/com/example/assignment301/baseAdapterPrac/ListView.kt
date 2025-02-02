@@ -1,4 +1,4 @@
-package com.example.assignment301.BaseAdapter
+package com.example.assignment301.baseAdapterPrac
 
 import android.app.Dialog
 import android.content.Context
@@ -17,7 +17,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.assignment301.R
 import com.example.assignment301.databinding.ActivityListViewBinding
 
-typealias Operation = (Int, String, String) -> Unit
+typealias Operation = (String, String) -> Unit
 
 class ListView : AppCompatActivity() {
     private lateinit var adapter: ListViewBaseAdapter
@@ -62,10 +62,15 @@ class ListView : AppCompatActivity() {
                     }else if(which == 1){
                         openDialog(this@ListView,
                             "Update",
-                            hidePositionEdt = true,
-                            { _, name, age ->
-                            list[index].name = name
-                                list[index].age = age
+                            { name, age ->
+
+                                if(name.length > 0 && age.length > 0){
+                                    list[index].name = name
+                                    list[index].age = age
+                                }else{
+                                    Toast.makeText(this@ListView, "Enter valid data", Toast.LENGTH_SHORT).show()
+                                }
+
                             adapter.notifyDataSetChanged()
                         })
                     }
@@ -87,8 +92,7 @@ class ListView : AppCompatActivity() {
             openDialog(
                 this,
                 "Add New Person",
-                true
-            ){ _, name, age ->
+            ){ name, age ->
                 run {
                     if(name.length > 0 && age.length > 0){
                         list.add( Person(name, age))
@@ -108,7 +112,6 @@ class ListView : AppCompatActivity() {
 
     private fun openDialog(context: Context,
                            action: String,
-                           hidePositionEdt: Boolean = false,
                            operation: Operation){
 
         val dialog = Dialog(context)
@@ -122,16 +125,9 @@ class ListView : AppCompatActivity() {
 
         val cancelBtn = dialog.findViewById<Button>(R.id.btnDialogCancel)
         val okayBtn = dialog.findViewById<Button>(R.id.btnDialogOk)
-        val positionEdt = dialog.findViewById<EditText>(R.id.edtDialogPosition)
         val nameEdt = dialog.findViewById<EditText>(R.id.edtDialogName)
         val ageEdt = dialog.findViewById<EditText>(R.id.edtDialogAge)
         val actionTv = dialog.findViewById<TextView>(R.id.tvActionHeader)
-
-        if(hidePositionEdt){
-            positionEdt.visibility = View.GONE
-        }
-
-
 
         actionTv.text = action
 
@@ -139,8 +135,7 @@ class ListView : AppCompatActivity() {
         okayBtn.setOnClickListener{
             val name = nameEdt.text.toString()
             val age = ageEdt.text.toString()
-            val position = positionEdt.text.toString().toIntOrNull() ?: 0
-            operation(position, name, age)
+            operation( name, age)
             dialog.dismiss()
         }
 
