@@ -35,5 +35,16 @@ class MainActivity : AppCompatActivity() {
             startActivity(indent)
         }
 
+        binding.btnPractice.setOnClickListener{
+            val indent = Intent(this@MainActivity, Practice::class.java)
+            startActivity(indent)
+        }
+
+        binding.btnRoomDBPrac.setOnClickListener{
+            val indent = Intent(this@MainActivity, Practice::class.java)
+            startActivity(indent)
+        }
+
+
     }
 }

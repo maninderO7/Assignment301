@@ -3,6 +3,7 @@ package com.example.assignment301.recyclerViewInterface
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import android.os.Looper
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
@@ -13,17 +14,21 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.example.assignment301.R
-import com.example.assignment301.baseAdapterPrac.Person
 import com.example.assignment301.databinding.ActivityRecyclerPracBinding
+import com.example.assignment301.roomdb.MyDatabase
+import com.example.assignment301.roomdb.PersonTable
+import com.example.assignment301.roomdb.PersonTableInterface
+import java.util.concurrent.Executors
 
 typealias Operation = (String, String) -> Unit
+typealias dataSyncOperation = () -> Unit
 
 class RecyclerPrac : AppCompatActivity(), Handler {
-    val list = arrayListOf<Person>()
+    val list = arrayListOf<PersonTable>()
     lateinit var recyclerAdapter: MyRecyclerAdapter
     lateinit var binding: ActivityRecyclerPracBinding
+    lateinit var persontableinterface: PersonTableInterface
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -39,8 +44,11 @@ class RecyclerPrac : AppCompatActivity(), Handler {
             insets
         }
 
+        persontableinterface = MyDatabase.getPersonTableInstance(this)
+
         recyclerAdapter = MyRecyclerAdapter(list, this)
-        binding.recyclerview.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        binding.recyclerview.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.recyclerview.adapter = recyclerAdapter
 
 
@@ -48,10 +56,34 @@ class RecyclerPrac : AppCompatActivity(), Handler {
             addItem()
         }
 
+        dataSyncExecutor{
+            list.addAll(persontableinterface.getAll())
+        }
+
+    }
+
+
+    fun dataSyncExecutor(operation: dataSyncOperation) {
+        val executor = Executors.newSingleThreadScheduledExecutor()
+        val handler = android.os.Handler(Looper.getMainLooper())
+
+        executor.execute {
+                operation()
+            handler.post {
+                recyclerAdapter.notifyDataSetChanged()
+            }
+
+        }
+
 
     }
 
     override fun delete(position: Int) {
+        val item = list[position]
+        dataSyncExecutor {
+            persontableinterface.deleteById(item.id)
+        }
+
         list.removeAt(position)
         recyclerAdapter.notifyDataSetChanged()
     }
@@ -60,6 +92,11 @@ class RecyclerPrac : AppCompatActivity(), Handler {
         openNameAgeDialog(this, "Update") { name, age ->
 
             if (name.length > 0 && age.length > 0) {
+
+                dataSyncExecutor {
+                    persontableinterface.setById(list[position].id, name, age)
+                }
+
                 list[position].name = name
                 list[position].age = age
                 recyclerAdapter.notifyDataSetChanged()
@@ -73,7 +110,13 @@ class RecyclerPrac : AppCompatActivity(), Handler {
     fun addItem() {
         openNameAgeDialog(this, "Add Item") { name, age ->
             if (name.length > 0 && age.length > 0) {
-                list.add(Person(name, age))
+                var id = -1
+
+                dataSyncExecutor{
+                    id = persontableinterface.addPerson(PersonTable(name, age)) as Int
+                }
+
+                list.add(PersonTable(id, name, age))
                 recyclerAdapter.notifyDataSetChanged()
             } else {
                 Toast.makeText(this, "Enter Valid data", Toast.LENGTH_SHORT).show()
@@ -83,7 +126,7 @@ class RecyclerPrac : AppCompatActivity(), Handler {
     }
 
     fun openNameAgeDialog(
-        context: Context, action: String, operation: Operation
+        context: Context, action: String, operation: Operation,
     ) {
 
         val dialog = Dialog(context)

@@ -7,7 +7,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.assignment301.R
-import com.example.assignment301.baseAdapterPrac.Person
+import com.example.assignment301.roomdb.PersonTable
 
 
 interface Handler {
@@ -17,7 +17,7 @@ interface Handler {
 
 
 class MyRecyclerAdapter(
-    var list: ArrayList<Person>,
+    var list: ArrayList<PersonTable>,
     var handler: Handler
 ) : RecyclerView.Adapter<MyRecyclerAdapter.ViewHolder>() {
 
